@@ -34,11 +34,12 @@ void loop()
     }
   }
 
-  if(isSerialDataReady){      
+  if(isSerialDataReady){   
+    //debugSerial();   
     processSerialData();
     normalizeControlVector();
-    makeControlIteration();
-    //debugSerial();
+    //debugControlVector();
+    makeControlIteration();    
   }
 
   blinker(); //DEBUG
@@ -64,7 +65,10 @@ void makeControlIteration(){
 }
 
 void debugSerial(){
-  Serial.println(serialData);
+  Serial.println(serialData);  
+}
+
+void debugControlVector(){
   Serial.print(controlVector[0]);  
   Serial.print(',');  
   Serial.print(controlVector[1]);  
@@ -72,7 +76,7 @@ void debugSerial(){
   Serial.print(controlVector[2]);  
   Serial.print(',');  
   Serial.print(controlVector[3]);  
-  Serial.print('\n'); 
+  Serial.print('\n');   
 }
 
 void blinker(){ //DEBUG
@@ -86,6 +90,7 @@ void blinker(){ //DEBUG
     digitalWrite(ledPin, ledState);
   }
 }
+
 
 
 
