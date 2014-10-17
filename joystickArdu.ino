@@ -3,7 +3,7 @@ unsigned long previousMillis = 0;
 long interval = 1000;
 int ledState = LOW;
 
-
+String serialData;
 long controlVector[4];
 void setup()  
 { 
@@ -16,27 +16,47 @@ void setup()
 
 void loop() 
 {
-  String content = "";
-  if (Serial.available()) {    
-    content = Serial.readStringUntil(']');  
+  char serialByte;
+  boolean isSerialDataReady = false;    
 
-    for(int i = 0; i < 4; i++){
-      int index = content.indexOf(",");
-      controlVector[i] = atol(content.substring(0,index).c_str());
-      content = content.substring(index+1);
-    }  
-    
-    processSerialData();
+  while(Serial.available()) {
+    serialByte = Serial.read();
+    if(serialByte == '['){
+      isSerialDataReady = false;
+    }
+    else if(serialByte == ']') {
+      isSerialDataReady = true;      
+      break; // Break out of the while loop
+    }
+    else {
+      serialData += String(serialByte); 
+      isSerialDataReady = false;
+    }
   }
-  
+
+  if(isSerialDataReady){      
+    processSerialData();
+    makeControlIteration();
+    //debugSerial();
+  }
+
   blinker();
 }
 
 void processSerialData(){
-  interval = controlVector[3];  
+  for(int i = 0; i < 4; i++){
+    int index = serialData.indexOf(",");
+    controlVector[i] = atol(serialData.substring(0,index).c_str());
+    serialData = serialData.substring(index+1);
+  }       
+}
+
+void makeControlIteration(){
+  interval = controlVector[3]; 
 }
 
 void debugSerial(){
+  Serial.println(serialData);
   Serial.print(controlVector[0]);  
   Serial.print(',');  
   Serial.print(controlVector[1]);  
@@ -44,26 +64,24 @@ void debugSerial(){
   Serial.print(controlVector[2]);  
   Serial.print(',');  
   Serial.print(controlVector[3]);  
-  //Serial.print('\n'); 
+  Serial.print('\n'); 
 }
 
 void blinker(){
   unsigned long currentMillis = millis();
-
-  if(currentMillis - previousMillis >= interval) {
-    // save the last time you blinked the LED 
-    previousMillis = currentMillis;   
-
-    // if the LED is off turn it on and vice-versa:
+  if(currentMillis - previousMillis >= interval) {    
+    previousMillis = currentMillis; 
     if (ledState == LOW)
       ledState = HIGH;
     else
-      ledState = LOW;
-    // set the LED with the ledState of the variable:
+      ledState = LOW;    
     digitalWrite(ledPin, ledState);
   }
-
 }
+
+
+
+
 
 
 
