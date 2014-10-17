@@ -36,6 +36,7 @@ void loop()
 
   if(isSerialDataReady){      
     processSerialData();
+    normalizeControlVector();
     makeControlIteration();
     //debugSerial();
   }
