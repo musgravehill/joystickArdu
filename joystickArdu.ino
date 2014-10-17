@@ -1,10 +1,10 @@
-const int ledPin =  13;
-unsigned long previousMillis = 0;
-long interval = 1000;
-int ledState = LOW;
+const int ledPin =  13; //DEBUG
+unsigned long previousMillis = 0; //DEBUG
+long interval = 1000; //DEBUG
+int ledState = LOW; //DEBUG
 
 String serialData;
-long controlVector[4];
+long controlVector[4]; //ROVER_THR, ROVER_YAW, CAM_PAN, CAM_TILT
 void setup()  
 { 
   Serial.begin(57600); 
@@ -40,7 +40,7 @@ void loop()
     //debugSerial();
   }
 
-  blinker();
+  blinker(); //DEBUG
 }
 
 void processSerialData(){
@@ -51,8 +51,15 @@ void processSerialData(){
   }       
 }
 
+void normalizeControlVector(){
+  controlVector[0] = map(controlVector[0], 0, 1000, 0, 180); //ROVER_THR  0..180
+  controlVector[1] = map(controlVector[1], 0, 1000, 0, 180); //ROVER_YAW  0..180
+  controlVector[2] = map(controlVector[2], 0, 1000, 0, 180); //CAM_PAN  0..180
+  controlVector[3] = map(controlVector[3], 0, 1000, 0, 180); //CAM_TILT  0..180
+}
+
 void makeControlIteration(){
-  interval = controlVector[3]; 
+  interval = map(controlVector[3], 0, 180, 0, 3000); //DEBUG
 }
 
 void debugSerial(){
@@ -67,7 +74,7 @@ void debugSerial(){
   Serial.print('\n'); 
 }
 
-void blinker(){
+void blinker(){ //DEBUG
   unsigned long currentMillis = millis();
   if(currentMillis - previousMillis >= interval) {    
     previousMillis = currentMillis; 
