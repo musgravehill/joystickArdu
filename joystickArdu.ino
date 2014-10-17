@@ -25,13 +25,15 @@ void loop()
       controlVector[i] = atol(content.substring(0,index).c_str());
       content = content.substring(index+1);
     }  
+    
+    processSerialData();
   }
   
   blinker();
 }
 
 void processSerialData(){
-  interval = controlVector[0];  
+  interval = controlVector[3];  
 }
 
 void debugSerial(){
