@@ -1,17 +1,18 @@
-const int ledPin =  13; //DEBUG
-unsigned long previousMillis = 0; //DEBUG
-long interval = 1000; //DEBUG
-int ledState = LOW; //DEBUG
-
+#include <Servo.h> 
 String serialData;
 long controlVector[4]; //ROVER_THR, ROVER_YAW, CAM_PAN, CAM_TILT
+
+Servo servo_cam_pan;
+Servo servo_cam_tilt;
+
 void setup()  
 { 
-  Serial.begin(57600); 
-  pinMode(ledPin, OUTPUT);
+  Serial.begin(115200);   
   for(int i = 0; i < 4; i++){
     controlVector[i] = 0;
   }
+  servo_cam_pan.attach(9);
+  servo_cam_tilt.attach(10);
 }
 
 void loop() 
@@ -40,9 +41,7 @@ void loop()
     normalizeControlVector();
     //debugControlVector();
     makeControlIteration();    
-  }
-
-  blinker(); //DEBUG
+  }  
 }
 
 void processSerialData(){
@@ -61,7 +60,9 @@ void normalizeControlVector(){
 }
 
 void makeControlIteration(){
-  interval = map(controlVector[3], 0, 180, 0, 3000); //DEBUG
+
+  servo_cam_pan.write(controlVector[2]); 
+  servo_cam_tilt.write(controlVector[3]);  
 }
 
 void debugSerial(){
@@ -79,17 +80,29 @@ void debugControlVector(){
   Serial.print('\n');   
 }
 
-void blinker(){ //DEBUG
-  unsigned long currentMillis = millis();
-  if(currentMillis - previousMillis >= interval) {    
-    previousMillis = currentMillis; 
-    if (ledState == LOW)
-      ledState = HIGH;
-    else
-      ledState = LOW;    
-    digitalWrite(ledPin, ledState);
-  }
-}
+/*
+void blinker(){ //DEBUG  
+ const int ledPin =  13; //DEBUG
+ unsigned long previousMillis = 0; //DEBUG
+ long interval = 1000; //DEBUG
+ int ledState = LOW; //DEBUG
+ pinMode(ledPin, OUTPUT);   
+ 
+ interval = map(controlVector[3], 0, 180, 0, 3000); //DEBUG
+ unsigned long currentMillis = millis();
+ if(currentMillis - previousMillis >= interval) {    
+ previousMillis = currentMillis; 
+ if (ledState == LOW)
+ ledState = HIGH;
+ else
+ ledState = LOW;    
+ digitalWrite(ledPin, ledState);
+ }
+ }
+ */
+
+
+
 
 
 
