@@ -7,10 +7,13 @@ Servo servo_cam_tilt;
 
 void setup()  
 { 
-  Serial.begin(115200);   
-  for(int i = 0; i < 4; i++){
-    controlVector[i] = 0;
-  }
+  Serial.begin(115200);    
+  //init control vector
+  controlVector[0] = 0;
+  controlVector[1] = 0;
+  controlVector[2] = 0;
+  controlVector[3] = 0;
+  //init actuator
   servo_cam_pan.attach(9);
   servo_cam_tilt.attach(10);
 }
@@ -53,10 +56,10 @@ void processSerialData(){
 }
 
 void normalizeControlVector(){
-  controlVector[0] = map(controlVector[0], 0, 1000, 0, 180); //ROVER_THR  0..180
-  controlVector[1] = map(controlVector[1], 0, 1000, 0, 180); //ROVER_YAW  0..180
-  controlVector[2] = map(controlVector[2], 0, 1000, 0, 180); //CAM_PAN  0..180
-  controlVector[3] = map(controlVector[3], 0, 1000, 0, 180); //CAM_TILT  0..180
+  controlVector[0] = map(controlVector[0], -500, 500, 0, 180); //ROVER_THR  0..180
+  controlVector[1] = map(controlVector[1], -500, 500, 0, 180); //ROVER_YAW  0..180
+  controlVector[2] = map(controlVector[2], -500, 500, 0, 180); //CAM_PAN  0..180
+  controlVector[3] = map(controlVector[3], -500, 500, 0, 180); //CAM_TILT  0..180
 }
 
 void makeControlIteration(){
