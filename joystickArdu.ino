@@ -1,6 +1,6 @@
 #include <Servo.h> 
 String serialData;
-long controlVector[4]; //ROVER_THR, ROVER_YAW, CAM_PAN, CAM_TILT
+int controlVector[4]; //ROVER_THR, ROVER_YAW, CAM_PAN, CAM_TILT
 
 Servo servo_cam_pan;
 Servo servo_cam_tilt;
@@ -26,6 +26,7 @@ void loop()
   while(Serial.available()) {
     serialByte = Serial.read();
     if(serialByte == '['){
+      serialData = "";
       isSerialDataReady = false;
     }
     else if(serialByte == ']') {
@@ -33,29 +34,28 @@ void loop()
       break; // Break out of the while loop
     }
     else {
-      serialData += String(serialByte); 
+      serialData += serialByte; //String(serialByte);
       isSerialDataReady = false;
     }
   }
 
-  if(isSerialDataReady){   
-    //debugSerial();   
+  if(isSerialDataReady){      
     processSerialData();
-    normalizeControlVector();
-    //debugControlVector();
+    normalizeControlVector();    
     makeControlIteration();    
   }  
 }
 
-void processSerialData(){
+void processSerialData(){  
   for(int i = 0; i < 4; i++){
     int index = serialData.indexOf(",");
     controlVector[i] = atol(serialData.substring(0,index).c_str());
-    serialData = serialData.substring(index+1);
+    serialData = serialData.substring(index+1);   
   }       
 }
 
 void normalizeControlVector(){
+  //debugControlVector();
   controlVector[0] = map(controlVector[0], -500, 500, 0, 180); //ROVER_THR  0..180
   controlVector[1] = map(controlVector[1], -500, 500, 0, 180); //ROVER_YAW  0..180
   controlVector[2] = map(controlVector[2], -500, 500, 0, 180); //CAM_PAN  0..180
@@ -64,7 +64,7 @@ void normalizeControlVector(){
 
 void makeControlIteration(){
 
-  servo_cam_pan.write(controlVector[2]); 
+  servo_cam_pan.write(controlVector[0]); 
   servo_cam_tilt.write(controlVector[3]);  
 }
 
